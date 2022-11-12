@@ -11,8 +11,8 @@ import main.PROCESS.Process;
 public class OS {
     public static Queue<PCB> HIGH_PRIORITY_QUEUE;
     public static Queue<PCB> LOW_PRIORITY_QUEUE;
-    Queue<PCB> RUNNING_QUEUE;
-    Process running_process;
+    public static Queue<PCB> RUNNING_QUEUE;
+    public static Process running_process;
 
     public OS() {
         HIGH_PRIORITY_QUEUE = new LinkedList<PCB>();
@@ -25,7 +25,7 @@ public class OS {
 
     }
 
-    public void execute() {
+    public static void execute() {
         if (!HIGH_PRIORITY_QUEUE.isEmpty()) {
             PCB pcb = HIGH_PRIORITY_QUEUE.remove();
             RUNNING_QUEUE.add(pcb);
@@ -39,6 +39,6 @@ public class OS {
         final File folder = new File("./Files");
         Process process = new Process();
         FileRead.listFilesFromFolder(folder, process);
-
+        execute();
     }
 }
