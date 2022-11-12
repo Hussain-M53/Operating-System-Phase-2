@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch OS",
+            "request": "launch",
+            "mainClass": "main.OS.OS",
+            "projectName": "Operating-System-Phase-2_db7c053f"
+        },
+        {
+            "type": "java",
             "name": "Launch Current File",
             "request": "launch",
             "mainClass": "${file}"

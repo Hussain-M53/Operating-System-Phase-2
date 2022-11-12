@@ -2,6 +2,7 @@ package main.PCB;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class PCB {
     private int PROCESS_ID;
@@ -14,8 +15,8 @@ public class PCB {
     private LocalTime WAITING_TIME, EXECUTION_TIME;
     private ArrayList<Byte> INTRUCTIONS;
 
-    public PCB(int PROCESS_PRIORITY,double PROCESS_SIZE,String PROCESS_FILE_NAME,ArrayList<Byte> INTRUCTIONS) {
-        set_PROCESS_ID();
+    public PCB(int PROCESS_ID,int PROCESS_PRIORITY,double PROCESS_SIZE,String PROCESS_FILE_NAME,ArrayList<Byte> INTRUCTIONS) {
+        this.PROCESS_ID= PROCESS_ID;
         set_PROCESS_PRIORITY(PROCESS_PRIORITY);
         this.PROCESS_FILE_NAME= PROCESS_FILE_NAME;
         this.INTRUCTIONS= INTRUCTIONS;
@@ -25,7 +26,7 @@ public class PCB {
         return this.INTRUCTIONS;
     }
 
-    private void set_PROCESS_ID() {
+    public void set_PROCESS_ID() {
         this.PROCESS_ID = (int) (1 + Math.random() * 1000);
     }
 
@@ -95,5 +96,13 @@ public class PCB {
 
     public LocalTime get_EXECUTION_TIME() {
         return this.EXECUTION_TIME;
+    }
+
+    @Override
+    public String toString() {
+        return "PCB [PROCESS_ID=" + PROCESS_ID + ", PROCESS_PRIORITY=" + PROCESS_PRIORITY + ", PROCESS_SIZE="
+                + PROCESS_SIZE + ", PROCESS_FILE_NAME=" + PROCESS_FILE_NAME + ", GPR=" + Arrays.toString(GPR) + ", SPR="
+                + Arrays.toString(SPR) + ", PAGE_TABLE=" + Arrays.toString(PAGE_TABLE) + ", WAITING_TIME="
+                + WAITING_TIME + ", EXECUTION_TIME=" + EXECUTION_TIME + ", INTRUCTIONS=" + INTRUCTIONS + "]";
     }
 }
