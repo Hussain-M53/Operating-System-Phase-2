@@ -1,6 +1,5 @@
 package main.PROCESS;
 
-import java.io.File;
 
 public class Main {
      //The program starts execution from the main method
@@ -11,8 +10,8 @@ public class Main {
     //And then the instructions are executed one by one.
 
     public static void main(String[] args) {
-        final File folder = new File("./Files");
-        FileRead.listFilesForFolder(folder);
+        // final File folder = new File("./Files");
+        //FileRead.listFilesForFolder(folder);
         // Process process = new Process();
         // String readFile = FileRead.read_file();
         // String[] hex_instr = readFile.split(" ");
