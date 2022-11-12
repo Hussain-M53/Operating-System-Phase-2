@@ -1,5 +1,6 @@
 package main.PROCESS;
 
+import java.util.ArrayList;
 import java.util.BitSet;
 
 import main.PCB.PCB;
@@ -42,7 +43,7 @@ public class Process {
         this.process_pcb = process_pcb;
         this.GPR = process_pcb.get_GPR();
         this.SPR = process_pcb.get_SPR();
-
+        copy_instructions_to_memory(process_pcb.get_INSTRUCTIONS());
     }
 
     // The fetchToIR Method fetches the instruction from the Program Counter and
@@ -62,7 +63,7 @@ public class Process {
 
     // This method copies the instructions read from the file into the memory
     // The first 50 bytes of the memory are allocated to the stack
-    void copy_instructions_to_memory(byte[] byte_instr) {
+    void copy_instructions_to_memory(ArrayList<Byte> byte_instr) {
 
         int instruction_start_index = 50;
         // The Stack limit (SPR[8]) is set to 49, which is the last index allocated to
@@ -92,8 +93,8 @@ public class Process {
 
         // Now after checking the pre-existing data in the memory
         // The new instructions are incremented one by one into the memory
-        for (int j = instruction_start_index; j < byte_instr.length + instruction_start_index; j++) {
-            memory[j] = byte_instr[count];
+        for (int j = instruction_start_index; j < byte_instr.size() + instruction_start_index; j++) {
+            memory[j] = byte_instr.get(count);
             count++;
             // After incrementing each instruction in the memory the Code Counter is
             // incremented by one.
@@ -138,14 +139,14 @@ public class Process {
     // Register
     // And displayes the values in the Special Purpose registers and General Purpose
     // registers.
-    boolean execute_instr() {
+    public boolean execute_instr() {
         while (!process_end && SPR[9] <= SPR[2]) {
             fetchToIR();
             findOpcodeInstr(SPR[10]);
             // flag_reg.clear();
             Display.print_registers(this);
             clock_cycle++;
-            if (clock_cycle <= clock_cycle_range) {
+            if (clock_cycle > clock_cycle_range) {
                 return false;
             }
         }

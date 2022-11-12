@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class PCB {
-    private int PROCESS_ID;
-    private int PROCESS_PRIORITY;
-    private double PROCESS_SIZE;
+    private short PROCESS_ID;
+    private byte PROCESS_PRIORITY;
+    private short PROCESS_SIZE;
     private String PROCESS_FILE_NAME;
     private short[] GPR = new short[16];
     private short[] SPR = new short[16];
@@ -15,26 +15,26 @@ public class PCB {
     private LocalTime WAITING_TIME, EXECUTION_TIME;
     private ArrayList<Byte> INTRUCTIONS;
 
-    public PCB(int PROCESS_ID,int PROCESS_PRIORITY,double PROCESS_SIZE,String PROCESS_FILE_NAME,ArrayList<Byte> INTRUCTIONS) {
+    public PCB(short PROCESS_ID,byte PROCESS_PRIORITY,short PROCESS_SIZE,String PROCESS_FILE_NAME,ArrayList<Byte> INTRUCTIONS) {
         this.PROCESS_ID= PROCESS_ID;
         set_PROCESS_PRIORITY(PROCESS_PRIORITY);
         this.PROCESS_FILE_NAME= PROCESS_FILE_NAME;
         this.INTRUCTIONS= INTRUCTIONS;
     }
 
-    ArrayList<Byte> get_INSTRUCTIONS() {
+    public ArrayList<Byte> get_INSTRUCTIONS() {
         return this.INTRUCTIONS;
     }
 
     public void set_PROCESS_ID() {
-        this.PROCESS_ID = (int) (1 + Math.random() * 1000);
+        this.PROCESS_ID = (byte) (1 + Math.random() * 1000);
     }
 
     int get_PROCESS_ID() {
         return this.PROCESS_ID;
     }
 
-    private void set_PROCESS_PRIORITY(int PROCESS_PRIORITY) {
+    private void set_PROCESS_PRIORITY(byte PROCESS_PRIORITY) {
         this.PROCESS_PRIORITY = PROCESS_PRIORITY;
     }
 
@@ -42,7 +42,7 @@ public class PCB {
         return PROCESS_PRIORITY;
     }
 
-    public void set_PROCESS_SIZE(double PROCESS_SIZE) {
+    public void set_PROCESS_SIZE(short PROCESS_SIZE) {
         this.PROCESS_SIZE = PROCESS_SIZE;
     }
 
