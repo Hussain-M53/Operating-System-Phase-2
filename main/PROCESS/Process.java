@@ -130,6 +130,8 @@ public class Process {
 
             case "F1", "F2", "F3":
                 No_Op.decode_execute(this, opcode);
+            default:
+                System.out.println("Invalid opcode");
         }
     }
 

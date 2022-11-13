@@ -16,18 +16,21 @@ public class FileRead {
                 listFilesFromFolder(fileEntry,process);
             } else {
                 System.out.println(fileEntry.getPath());
-                read_file(process,fileEntry.getPath());
+                set_process_to_queue_from_file(process,fileEntry.getPath());
             }
         }
     }
 
+    static short join(byte num1,byte num2){
+        return (short) ((num1*256) + num2);
+    }
     // The FileRead Method reads the file and returns the result by concatinating
     // the data in the file, seperated by spaces.
     // This is later used to split the result and store the Hex Instructions into an
     // array.
-    public static void read_file(Process process,String path) {
+    public static void set_process_to_queue_from_file(Process process,String path) {
         byte byteRead,priority=0;
-        int id=0,data_size=0;
+        short id=0,data_size=0;
         int counter=0;
         ArrayList<Byte> instr = new ArrayList<Byte>();
         try {
@@ -37,10 +40,10 @@ public class FileRead {
                 if (counter == 1)
                      priority =byteRead;
                 else if(counter == 2){
-                    id =  byteRead*256 + inputStream.read();
+                    id =  join(byteRead,(byte)inputStream.read());
                     counter++;
                 }else if(counter == 4){
-                    data_size =  byteRead*256 + inputStream.read();
+                    data_size = join(byteRead,(byte)inputStream.read());
                     counter++;
                 }else if (counter > 8){
                     instr.add(byteRead);

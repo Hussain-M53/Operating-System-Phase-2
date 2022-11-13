@@ -21,9 +21,6 @@ public class OS {
         running_process = new Process();
     }
 
-    public void set_process_to_queue_from_file() {
-
-    }
 
     public static void execute() {
         PCB pcb ;
@@ -40,7 +37,16 @@ public class OS {
         if(switch_context){
             pcb = running_process.transfer_to_pcb();
             byte priority = pcb.get_PROCESS_PRIORITY();
-            
+            if(priority >=0 && priority<=15){
+                HIGH_PRIORITY_QUEUE.add(pcb);
+            }else if(priority > 15){
+                LOW_PRIORITY_QUEUE.add(pcb);
+            }else{
+                System.out.println("Invalid priority");
+            }
+        }else{
+            RUNNING_QUEUE.remove();
+            //a process executed successfully
         }
     }
 
