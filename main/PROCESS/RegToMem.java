@@ -14,7 +14,7 @@ public class RegToMem {
                 break;
 
             case "52": // MOVS Instruction, loads the value R1 and assigns it to memory location.
-                process.memory[value] = (byte) RegToImmediate.immediate(process);
+            Process.memory[value] = (byte) RegToImmediate.immediate(process);
         }
     }
 }

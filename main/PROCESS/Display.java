@@ -6,7 +6,7 @@ public class Display{
     static void print_mem(Process process) {
         System.out.print("Memory : ");
         for (int i = 0; i <= process.SPR[2]; i++) {
-            System.out.print(Convert.convert_int_to_hexa(Byte.toUnsignedInt(process.memory[i])) + " ");
+            System.out.print(Convert.convert_int_to_hexa(Byte.toUnsignedInt(Process.memory[i])) + " ");
         }
         System.out.println();
         System.out.println("x-------------------------------------------------x");

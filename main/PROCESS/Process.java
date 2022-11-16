@@ -11,8 +11,9 @@ public class Process {
     int clock_cycle_range = 2;
 
     // Initializes the memory containing 2^16 bytes in a byte array.
-    byte memory[] = new byte[65536];
-
+    public static byte memory[] = new byte[65536];
+    static final int frame_size = 128;
+    static final int total_frame = memory.length / frame_size; 
     // Initializes the flag register to 16 bits (2 bytes).
     BitSet flag_reg = new BitSet(16);
 
@@ -33,17 +34,17 @@ public class Process {
     public Process() {
     }
 
-    public PCB transfer_to_pcb() {
+    public PCB load_to_pcb() {
         process_pcb.set_GPR(this.GPR);
         process_pcb.set_SPR(this.SPR);
         return process_pcb;
     }
 
-    public void get_from_pcb(PCB process_pcb) {
+    public void load_from_pcb(PCB process_pcb) {
         this.process_pcb = process_pcb;
         this.GPR = process_pcb.get_GPR();
         this.SPR = process_pcb.get_SPR();
-        copy_instructions_to_memory(process_pcb.get_INSTRUCTIONS());
+        //copy_instructions_to_memory();
     }
 
     // The fetchToIR Method fetches the instruction from the Program Counter and
@@ -63,7 +64,7 @@ public class Process {
 
     // This method copies the instructions read from the file into the memory
     // The first 50 bytes of the memory are allocated to the stack
-    void copy_instructions_to_memory(ArrayList<Byte> byte_instr) {
+    public void copy_instructions_to_memory(ArrayList<Byte> byte_instr) {
 
         int instruction_start_index = 50;
         // The Stack limit (SPR[8]) is set to 49, which is the last index allocated to
@@ -76,7 +77,7 @@ public class Process {
 
         // Checks the memory for pre-existing data and sets the instruction start index
         // to the memory index that is currently empty.
-        for (int i = 50; i < memory.length; i++) {
+        for (int i = instruction_start_index; i < memory.length; i++) {
             if (Convert.convert_int_to_hexa(memory[i]) == "F3") {
                 instruction_start_index = ++i;
                 break;

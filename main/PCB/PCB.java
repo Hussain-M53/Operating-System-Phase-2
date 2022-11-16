@@ -2,7 +2,6 @@ package main.PCB;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class PCB {
 
@@ -12,37 +11,31 @@ public class PCB {
     private String PROCESS_FILE_NAME;
     private short[] GPR = new short[16];
     private short[] SPR = new short[16];
-    private int[][] DATA_PAGE_TABLE;
-    private int[][] CODE_PAGE_TABLE;
+    private ArrayList<Integer> DATA_PAGE_TABLE;
+    private ArrayList<Integer> CODE_PAGE_TABLE;
+    //private ArrayList<Integer> Free_PAGE_TABLE;
     private LocalTime WAITING_TIME, EXECUTION_TIME;
-    private ArrayList<Byte> INTRUCTIONS;
 
-    public PCB(short PROCESS_ID, byte PROCESS_PRIORITY, short PROCESS_SIZE, String PROCESS_FILE_NAME,
-            ArrayList<Byte> INTRUCTIONS) {
+    public PCB(short PROCESS_ID, byte PROCESS_PRIORITY, short PROCESS_SIZE, String PROCESS_FILE_NAME) {
         this.PROCESS_ID = PROCESS_ID;
         set_PROCESS_PRIORITY(PROCESS_PRIORITY);
         this.PROCESS_FILE_NAME = PROCESS_FILE_NAME;
-        this.INTRUCTIONS = INTRUCTIONS;
     }
 
-    public int[][] getCODE_PAGE_TABLE() {
+    public ArrayList<Integer> getCODE_PAGE_TABLE() {
         return CODE_PAGE_TABLE;
     }
 
-    public void setCODE_PAGE_TABLE(int[][] cODE_PAGE_TABLE) {
-        CODE_PAGE_TABLE = cODE_PAGE_TABLE;
+    public void setCODE_PAGE_TABLE(int frame) {
+        CODE_PAGE_TABLE.add(frame);
     }
 
-    public int[][] getDATA_PAGE_TABLE() {
+    public ArrayList<Integer> getDATA_PAGE_TABLE() {
         return DATA_PAGE_TABLE;
     }
 
-    public void setDATA_PAGE_TABLE(int[][] dATA_PAGE_TABLE) {
-        DATA_PAGE_TABLE = dATA_PAGE_TABLE;
-    }
-
-    public ArrayList<Byte> get_INSTRUCTIONS() {
-        return this.INTRUCTIONS;
+    public void setDATA_PAGE_TABLE(int frame) {
+        DATA_PAGE_TABLE.add(frame);
     }
 
     public void set_PROCESS_ID() {
@@ -107,15 +100,6 @@ public class PCB {
 
     public LocalTime get_EXECUTION_TIME() {
         return this.EXECUTION_TIME;
-    }
-
-    @Override
-    public String toString() {
-        return "PCB [PROCESS_ID=" + PROCESS_ID + ", PROCESS_PRIORITY=" + PROCESS_PRIORITY + ", PROCESS_SIZE="
-                + PROCESS_SIZE + ", PROCESS_FILE_NAME=" + PROCESS_FILE_NAME + ", GPR=" + Arrays.toString(GPR) + ", SPR="
-                + Arrays.toString(SPR) + ", DATA_PAGE_TABLE=" + Arrays.toString(DATA_PAGE_TABLE) + ", CODE_PAGE_TABLE="
-                + Arrays.toString(CODE_PAGE_TABLE) + ", WAITING_TIME=" + WAITING_TIME + ", EXECUTION_TIME="
-                + EXECUTION_TIME + ", INTRUCTIONS=" + INTRUCTIONS + "]";
     }
 
 }

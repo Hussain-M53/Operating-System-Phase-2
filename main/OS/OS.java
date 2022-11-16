@@ -21,29 +21,34 @@ public class OS {
         running_process = new Process();
     }
 
-
+    public static boolean check_priority_and_addtoQueue(byte priority,PCB pcb){
+        if(priority >=0 && priority<=15){
+            HIGH_PRIORITY_QUEUE.add(pcb);
+        }else if(priority > 15 && priority<=31){
+            LOW_PRIORITY_QUEUE.add(pcb);
+        }else{
+            System.out.println("Invalid priority");
+            return false;
+        }
+        return true;
+    }
+    
     public static void execute() {
         PCB pcb ;
         if (!HIGH_PRIORITY_QUEUE.isEmpty()) {
             pcb = HIGH_PRIORITY_QUEUE.remove();
             RUNNING_QUEUE.add(pcb);
-            running_process.get_from_pcb(pcb);
+            running_process.load_from_pcb(pcb);
         } else {
             pcb = LOW_PRIORITY_QUEUE.remove();
             RUNNING_QUEUE.add(pcb);
-            running_process.get_from_pcb(pcb);
+            running_process.load_from_pcb(pcb);
         }
         boolean switch_context = !running_process.execute_instr();
         if(switch_context){
-            pcb = running_process.transfer_to_pcb();
+            pcb = running_process.load_to_pcb();
             byte priority = pcb.get_PROCESS_PRIORITY();
-            if(priority >=0 && priority<=15){
-                HIGH_PRIORITY_QUEUE.add(pcb);
-            }else if(priority > 15){
-                LOW_PRIORITY_QUEUE.add(pcb);
-            }else{
-                System.out.println("Invalid priority");
-            }
+            check_priority_and_addtoQueue(priority,pcb);
         }else{
             RUNNING_QUEUE.remove();
             //a process executed successfully

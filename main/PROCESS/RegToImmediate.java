@@ -90,7 +90,7 @@ public class RegToImmediate {
                 break;
 
             case "3C": // CALL Instruction ,Pushes the PC on stack, and jumps to offset.
-                process.memory[process.SPR[7]] = (byte)process.SPR[9];
+                Process.memory[process.SPR[7]] = (byte)process.SPR[9];
                 process.SPR[9] = immediate(process);
                 ++process.SPR[7];
                 break;
