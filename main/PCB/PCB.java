@@ -13,7 +13,6 @@ public class PCB {
     private short[] SPR = new short[16];
     private ArrayList<Integer> DATA_PAGE_TABLE;
     private ArrayList<Integer> CODE_PAGE_TABLE;
-    //private ArrayList<Integer> Free_PAGE_TABLE;
     private LocalTime WAITING_TIME, EXECUTION_TIME;
 
     public PCB(short PROCESS_ID, byte PROCESS_PRIORITY, short PROCESS_SIZE, String PROCESS_FILE_NAME) {
@@ -42,7 +41,7 @@ public class PCB {
         this.PROCESS_ID = (byte) (1 + Math.random() * 1000);
     }
 
-    Short get_PROCESS_ID() {
+    public Short get_PROCESS_ID() {
         return this.PROCESS_ID;
     }
 

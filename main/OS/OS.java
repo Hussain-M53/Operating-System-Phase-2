@@ -1,6 +1,7 @@
 package main.OS;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -9,49 +10,72 @@ import main.PROCESS.FileRead;
 import main.PROCESS.Process;
 
 public class OS {
-    public static Queue<PCB> HIGH_PRIORITY_QUEUE;
+    public static ArrayList<PCB> HIGH_PRIORITY_QUEUE;
     public static Queue<PCB> LOW_PRIORITY_QUEUE;
     public static Queue<PCB> RUNNING_QUEUE;
     public static Process running_process;
+    ArrayList<Integer> Free_PAGE_TABLE;
 
     public OS() {
-        HIGH_PRIORITY_QUEUE = new LinkedList<PCB>();
+        HIGH_PRIORITY_QUEUE = new ArrayList<PCB>();
         LOW_PRIORITY_QUEUE = new LinkedList<PCB>();
         RUNNING_QUEUE = new LinkedList<PCB>();
         running_process = new Process();
+        Free_PAGE_TABLE = new ArrayList<Integer>();
     }
 
-    public static boolean check_priority_and_addtoQueue(byte priority,PCB pcb){
-        if(priority >=0 && priority<=15){
+    public static boolean check_priority_and_addtoQueue(byte priority, PCB pcb) {
+        if (priority >= 0 && priority <= 15) {
             HIGH_PRIORITY_QUEUE.add(pcb);
-        }else if(priority > 15 && priority<=31){
+        } else if (priority > 15 && priority <= 31) {
             LOW_PRIORITY_QUEUE.add(pcb);
-        }else{
+        } else {
             System.out.println("Invalid priority");
             return false;
         }
         return true;
     }
-    
-    public static void execute() {
-        PCB pcb ;
-        if (!HIGH_PRIORITY_QUEUE.isEmpty()) {
-            pcb = HIGH_PRIORITY_QUEUE.remove();
-            RUNNING_QUEUE.add(pcb);
-            running_process.load_from_pcb(pcb);
-        } else {
-            pcb = LOW_PRIORITY_QUEUE.remove();
-            RUNNING_QUEUE.add(pcb);
-            running_process.load_from_pcb(pcb);
+
+    public static void priority_scheduling() {
+        int index = 0;
+        for (int i = 1; i < HIGH_PRIORITY_QUEUE.size(); i++) {
+            if (HIGH_PRIORITY_QUEUE.get(index).get_PROCESS_PRIORITY() < HIGH_PRIORITY_QUEUE.get(i)
+                    .get_PROCESS_PRIORITY()) {
+                index = i;
+            }
         }
-        boolean switch_context = !running_process.execute_instr();
-        if(switch_context){
-            pcb = running_process.load_to_pcb();
-            byte priority = pcb.get_PROCESS_PRIORITY();
-            check_priority_and_addtoQueue(priority,pcb);
-        }else{
-            RUNNING_QUEUE.remove();
-            //a process executed successfully
+        PCB pcb = HIGH_PRIORITY_QUEUE.remove(index);
+        RUNNING_QUEUE.add(pcb);
+        running_process.load_from_pcb(pcb);
+    }
+
+    public static void round_robin_scheduling() {
+        PCB pcb = LOW_PRIORITY_QUEUE.remove();
+        RUNNING_QUEUE.add(pcb);
+        running_process.load_from_pcb(pcb);
+        running_process.set_cycle_limit(8);
+        running_process.apply_RR=true;
+    }
+
+    public static void execute() {
+        PCB pcb;
+        while (!HIGH_PRIORITY_QUEUE.isEmpty() || !LOW_PRIORITY_QUEUE.isEmpty()) {
+            if (!HIGH_PRIORITY_QUEUE.isEmpty()) {
+                priority_scheduling();
+            } else {
+                round_robin_scheduling();
+            }
+            boolean switch_context = !running_process.execute_instr();
+            if (switch_context) {
+                pcb = running_process.load_to_pcb();
+                byte priority = pcb.get_PROCESS_PRIORITY();
+                check_priority_and_addtoQueue(priority, pcb);
+            } else {
+                RUNNING_QUEUE.remove();
+                System.out.println("Process " + running_process.process_pcb.get_PROCESS_ID() + " of name "
+                        + running_process.process_pcb.get_PROCESS_FILE_NAME() + " and priority "
+                        + running_process.process_pcb.get_PROCESS_PRIORITY() + " is completed");
+            }
         }
     }
 

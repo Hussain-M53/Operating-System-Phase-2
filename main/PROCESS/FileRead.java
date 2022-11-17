@@ -11,7 +11,8 @@ import main.PCB.PCB;
 
 public class FileRead {
     static int current_frame = 0;
-    static int current_byte = 0;
+    static int memory_index = 0;
+    static int bytes_in_frame = 0;
     static ArrayList<Byte> data_instr = new ArrayList<Byte>();
     static ArrayList<Byte> code_instr = new ArrayList<Byte>();
 
@@ -30,7 +31,7 @@ public class FileRead {
         return (short) ((num1 * 256) + num2);
     }
 
-    static void copy_data_to_memory(ArrayList<Byte> instr, PCB pcb) {
+    static void load_data_to_memory(ArrayList<Byte> instr, PCB pcb) {
         int instruction_start_index = 50;
         for (int i = instruction_start_index; i < Process.memory.length; i++) {
             if (Convert.convert_int_to_hexa(Process.memory[i]) == "F3") {
@@ -38,34 +39,33 @@ public class FileRead {
                 break;
             }
         }
+        int current_byte = 0;
         for (int j = instruction_start_index; j < instr.size() + instruction_start_index; j++) {
             Process.memory[j] = instr.get(current_byte);
             current_byte++;
-            if (current_byte == 128) {
-                current_byte=0;
+            bytes_in_frame++;
+            if (bytes_in_frame == 128 || j == instr.size() - 1) {
+                bytes_in_frame = 0;
                 pcb.setDATA_PAGE_TABLE(current_frame);
                 current_frame++;
             }
         }
+        memory_index = current_byte;
     }
 
-    static void copy_code_to_memory(ArrayList<Byte> instr, PCB pcb) {
-        int instruction_start_index = 50;
-        for (int i = instruction_start_index; i < Process.memory.length; i++) {
-            if (Convert.convert_int_to_hexa(Process.memory[i]) == "F3") {
-                instruction_start_index = ++i;
-                break;
-            }
-        }
-        for (int j = instruction_start_index; j < instr.size() + instruction_start_index; j++) {
+    static void load_code_to_memory(ArrayList<Byte> instr, PCB pcb) {
+        int current_byte=0;
+        for (int j = memory_index; j < instr.size() + memory_index; j++) {
             Process.memory[j] = instr.get(current_byte);
             current_byte++;
-            if (current_byte == 128) {
-                current_byte=0;
-                pcb.setDATA_PAGE_TABLE(current_frame);
+            bytes_in_frame++;
+            if (bytes_in_frame == 128 || j == instr.size() - 1) {
+                bytes_in_frame=0;
+                pcb.setCODE_PAGE_TABLE(current_frame);
                 current_frame++;
             }
         }
+        memory_index = current_byte;
     }
 
     // The FileRead Method reads the file and returns the result by concatinating
@@ -102,8 +102,8 @@ public class FileRead {
             PCB pcb = new PCB(id, priority, counter, path);
             boolean process_added = OS.check_priority_and_addtoQueue(priority, pcb);
             if (process_added) {
-                copy_data_to_memory(data_instr, pcb);
-                copy_code_to_memory(code_instr, pcb);
+                load_data_to_memory(data_instr, pcb);
+                load_code_to_memory(code_instr, pcb);
             }
         } catch (IOException e) {
             e.printStackTrace();

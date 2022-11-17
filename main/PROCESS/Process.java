@@ -9,11 +9,11 @@ public class Process {
 
     int clock_cycle = 0;
     int clock_cycle_range = 2;
-
+    public boolean apply_RR = false;
     // Initializes the memory containing 2^16 bytes in a byte array.
     public static byte memory[] = new byte[65536];
     static final int frame_size = 128;
-    static final int total_frame = memory.length / frame_size; 
+    static final int total_frame = memory.length / frame_size;
     // Initializes the flag register to 16 bits (2 bytes).
     BitSet flag_reg = new BitSet(16);
 
@@ -29,9 +29,13 @@ public class Process {
     boolean process_end = false;
 
     // every process will have its own PCB
-    PCB process_pcb;
+    public PCB process_pcb;
 
     public Process() {
+    }
+
+    public void set_cycle_limit(int limit) {
+        clock_cycle_range = limit;
     }
 
     public PCB load_to_pcb() {
@@ -44,7 +48,7 @@ public class Process {
         this.process_pcb = process_pcb;
         this.GPR = process_pcb.get_GPR();
         this.SPR = process_pcb.get_SPR();
-        //copy_instructions_to_memory();
+        // copy_instructions_to_memory();
     }
 
     // The fetchToIR Method fetches the instruction from the Program Counter and
@@ -149,7 +153,7 @@ public class Process {
             // flag_reg.clear();
             Display.print_registers(this);
             clock_cycle++;
-            if (clock_cycle > clock_cycle_range) {
+            if (clock_cycle > clock_cycle_range && apply_RR) {
                 return false;
             }
         }
