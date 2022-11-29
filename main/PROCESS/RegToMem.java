@@ -6,7 +6,7 @@ public class RegToMem {
     static void decode_execute(Process process,String opcode) {
 
         process.fetchToIR();
-        int value = process.SPR[10];
+        int value = process.SPR[11];
 
         switch (opcode) {
             case "51":  // MOVL Instruction, loads the value from the memory location and assigns it to R1.

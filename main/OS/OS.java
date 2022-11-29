@@ -10,19 +10,11 @@ import main.PROCESS.FileRead;
 import main.PROCESS.Process;
 
 public class OS {
-    public static ArrayList<PCB> HIGH_PRIORITY_QUEUE;
-    public static Queue<PCB> LOW_PRIORITY_QUEUE;
-    public static Queue<PCB> RUNNING_QUEUE;
-    public static Process running_process;
-    ArrayList<Integer> Free_PAGE_TABLE;
-
-    public OS() {
-        HIGH_PRIORITY_QUEUE = new ArrayList<PCB>();
-        LOW_PRIORITY_QUEUE = new LinkedList<PCB>();
-        RUNNING_QUEUE = new LinkedList<PCB>();
-        running_process = new Process();
-        Free_PAGE_TABLE = new ArrayList<Integer>();
-    }
+    public static ArrayList<PCB> HIGH_PRIORITY_QUEUE = new ArrayList<PCB>();;
+    public static Queue<PCB> LOW_PRIORITY_QUEUE = new LinkedList<PCB>();
+    public static Queue<PCB> RUNNING_QUEUE = new LinkedList<PCB>();
+    public static Process running_process = new Process();
+    public static ArrayList<Integer> Free_PAGE_TABLE = new ArrayList<Integer>();
 
     public static boolean check_priority_and_addtoQueue(byte priority, PCB pcb) {
         if (priority >= 0 && priority <= 15) {
@@ -39,12 +31,13 @@ public class OS {
     public static void priority_scheduling() {
         int index = 0;
         for (int i = 1; i < HIGH_PRIORITY_QUEUE.size(); i++) {
-            if (HIGH_PRIORITY_QUEUE.get(index).get_PROCESS_PRIORITY() < HIGH_PRIORITY_QUEUE.get(i)
+            if (HIGH_PRIORITY_QUEUE.get(index).get_PROCESS_PRIORITY() > HIGH_PRIORITY_QUEUE.get(i)
                     .get_PROCESS_PRIORITY()) {
                 index = i;
             }
         }
         PCB pcb = HIGH_PRIORITY_QUEUE.remove(index);
+        running_process.load_from_pcb(pcb);
         RUNNING_QUEUE.add(pcb);
         running_process.load_from_pcb(pcb);
     }
@@ -54,7 +47,7 @@ public class OS {
         RUNNING_QUEUE.add(pcb);
         running_process.load_from_pcb(pcb);
         running_process.set_cycle_limit(8);
-        running_process.apply_RR=true;
+        running_process.apply_RR = true;
     }
 
     public static void execute() {
@@ -65,6 +58,7 @@ public class OS {
             } else {
                 round_robin_scheduling();
             }
+            System.out.println(running_process.process_pcb.get_PROCESS_FILE_NAME());
             boolean switch_context = !running_process.execute_instr();
             if (switch_context) {
                 pcb = running_process.load_to_pcb();
@@ -76,6 +70,13 @@ public class OS {
                         + running_process.process_pcb.get_PROCESS_FILE_NAME() + " and priority "
                         + running_process.process_pcb.get_PROCESS_PRIORITY() + " is completed");
             }
+            break;
+        }
+    }
+
+    static void set_Free_page_table() {
+        for (int i = FileRead.current_frame; i <= (Process.memory.length / 128); i++) {
+            Free_PAGE_TABLE.add(i);
         }
     }
 
@@ -83,6 +84,7 @@ public class OS {
         final File folder = new File("./Files");
         Process process = new Process();
         FileRead.listFilesFromFolder(folder, process);
+        set_Free_page_table();
         execute();
     }
 }

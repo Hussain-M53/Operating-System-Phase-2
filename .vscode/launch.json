@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch Main",
+            "request": "launch",
+            "mainClass": "main.PROCESS.Main",
+            "projectName": "Operating-System-Phase-2_4539543e"
+        },
+        {
+            "type": "java",
+            "name": "Launch OS",
+            "request": "launch",
+            "mainClass": "main.OS.OS",
+            "projectName": "Operating-System-Phase-2_4539543e"
+        },
+        {
+            "type": "java",
             "name": "Launch OS",
             "request": "launch",
             "mainClass": "main.OS.OS",

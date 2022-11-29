@@ -31,6 +31,8 @@ public class Process {
     // every process will have its own PCB
     public PCB process_pcb;
 
+    int current_frame, current_page, current_offset, jump_page, jump_offset;
+
     public Process() {
     }
 
@@ -56,8 +58,8 @@ public class Process {
     // After fetching this instruction, the Program Counter is incremented by one,
     // pointing to the next instruction.
     void fetchToIR() {
-        SPR[10] = (short) unsign(memory[SPR[9]]);
-        SPR[9]++;
+        SPR[11] = (short) unsign(memory[SPR[10]]);
+        SPR[10]++;
     }
 
     // The unsign method converts the byte into a unsigned integer and casts the
@@ -66,45 +68,8 @@ public class Process {
         return (short) Byte.toUnsignedInt(num);
     }
 
-    // This method copies the instructions read from the file into the memory
-    // The first 50 bytes of the memory are allocated to the stack
-    public void copy_instructions_to_memory(ArrayList<Byte> byte_instr) {
+    public void set_gpr_spr_first() {
 
-        int instruction_start_index = 50;
-        // The Stack limit (SPR[8]) is set to 49, which is the last index allocated to
-        // the stack in the memory.
-        SPR[8] = 49;
-        // The Stack Base (SPR[6]) is set to 0.
-        SPR[6] = 0;
-        // The Stack counter is set to the Stack Base which is 0.
-        SPR[7] = SPR[6];
-
-        // Checks the memory for pre-existing data and sets the instruction start index
-        // to the memory index that is currently empty.
-        for (int i = instruction_start_index; i < memory.length; i++) {
-            if (Convert.convert_int_to_hexa(memory[i]) == "F3") {
-                instruction_start_index = ++i;
-                break;
-            }
-        }
-        // The Code Base and the Program Counter is set to this instruction_start_index
-        SPR[0] = (short) instruction_start_index;
-        SPR[9] = SPR[0];
-        // The Code Counter currently points to the last index instruction in the
-        // memory.
-        SPR[2] = (short) (instruction_start_index - 1);
-        SPR[1] = (short) memory.length;
-        int count = 0;
-
-        // Now after checking the pre-existing data in the memory
-        // The new instructions are incremented one by one into the memory
-        for (int j = instruction_start_index; j < byte_instr.size() + instruction_start_index; j++) {
-            memory[j] = byte_instr.get(count);
-            count++;
-            // After incrementing each instruction in the memory the Code Counter is
-            // incremented by one.
-            SPR[2]++;
-        }
     }
 
     // This method is used to decode the instruction and convert it from an integer
@@ -116,6 +81,7 @@ public class Process {
     // The findOpcodeInstr analysis the Opcode and executes it accordingly
     void findOpcodeInstr(int op) {
         String opcode = decode_IR(op);
+        System.out.println("Opcode : " + opcode);
         switch (opcode) {
             case "16", "17", "18", "19", "1A", "1B", "1C":
                 RegToReg.decode_execute(this, opcode);
@@ -147,9 +113,10 @@ public class Process {
     // And displayes the values in the Special Purpose registers and General Purpose
     // registers.
     public boolean execute_instr() {
-        while (!process_end && SPR[9] <= SPR[2]) {
+        while (!process_end && SPR[10] <= SPR[3]) {
+            // System.out.println("pc : "+SPR[10]);
             fetchToIR();
-            findOpcodeInstr(SPR[10]);
+            findOpcodeInstr(SPR[11]);
             // flag_reg.clear();
             Display.print_registers(this);
             clock_cycle++;

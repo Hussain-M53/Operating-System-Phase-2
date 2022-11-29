@@ -9,6 +9,7 @@ public class PCB {
     private byte PROCESS_PRIORITY;
     private short PROCESS_SIZE;
     private String PROCESS_FILE_NAME;
+    private int STACK_FRAME;
     private short[] GPR = new short[16];
     private short[] SPR = new short[16];
     private ArrayList<Integer> DATA_PAGE_TABLE;
@@ -19,6 +20,17 @@ public class PCB {
         this.PROCESS_ID = PROCESS_ID;
         set_PROCESS_PRIORITY(PROCESS_PRIORITY);
         this.PROCESS_FILE_NAME = PROCESS_FILE_NAME;
+        DATA_PAGE_TABLE = new ArrayList<Integer>();
+        CODE_PAGE_TABLE = new ArrayList<Integer>();
+
+    }
+
+    public int getSTACK_FRAME() {
+        return STACK_FRAME;
+    }
+
+    public void setSTACK_FRAME(int sTACK_FRAME) {
+        STACK_FRAME = sTACK_FRAME;
     }
 
     public ArrayList<Integer> getCODE_PAGE_TABLE() {
