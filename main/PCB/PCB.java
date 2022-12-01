@@ -1,9 +1,17 @@
 package main.PCB;
-
-import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class PCB {
+
+    @Override
+    public String toString() {
+        return "PCB [PROCESS_ID=" + PROCESS_ID + ", PROCESS_PRIORITY=" + PROCESS_PRIORITY + ", PROCESS_SIZE="
+                + PROCESS_SIZE + ", PROCESS_FILE_NAME=" + PROCESS_FILE_NAME + ", STACK_FRAME=" + STACK_FRAME + ", GPR="
+                + Arrays.toString(GPR) + ", SPR=" + Arrays.toString(SPR) + ", DATA_PAGE_TABLE=" + DATA_PAGE_TABLE
+                + ", CODE_PAGE_TABLE=" + CODE_PAGE_TABLE + ", WAITING_TIME=" + WAITING_TIME + ", EXECUTION_TIME="
+                + EXECUTION_TIME + "]";
+    }
 
     private short PROCESS_ID;
     private byte PROCESS_PRIORITY;
@@ -14,7 +22,7 @@ public class PCB {
     private short[] SPR = new short[16];
     private ArrayList<Integer> DATA_PAGE_TABLE;
     private ArrayList<Integer> CODE_PAGE_TABLE;
-    private LocalTime WAITING_TIME, EXECUTION_TIME;
+    public int WAITING_TIME, EXECUTION_TIME;
 
     public PCB(short PROCESS_ID, byte PROCESS_PRIORITY, short PROCESS_SIZE, String PROCESS_FILE_NAME) {
         this.PROCESS_ID = PROCESS_ID;
@@ -29,8 +37,8 @@ public class PCB {
         return STACK_FRAME;
     }
 
-    public void setSTACK_FRAME(int sTACK_FRAME) {
-        STACK_FRAME = sTACK_FRAME;
+    public void setSTACK_FRAME(int frame_no) {
+        STACK_FRAME = frame_no;
     }
 
     public ArrayList<Integer> getCODE_PAGE_TABLE() {
@@ -96,21 +104,4 @@ public class PCB {
     public short[] get_SPR() {
         return this.SPR;
     }
-
-    public void set_WAITING_TIME(LocalTime WAITING_TIME) {
-        this.WAITING_TIME = WAITING_TIME;
-    }
-
-    public LocalTime get_WAITING_TIME() {
-        return this.WAITING_TIME;
-    }
-
-    public void set_EXECUTION_TIME(LocalTime EXECUTION_TIME) {
-        this.EXECUTION_TIME = EXECUTION_TIME;
-    }
-
-    public LocalTime get_EXECUTION_TIME() {
-        return this.EXECUTION_TIME;
-    }
-
 }

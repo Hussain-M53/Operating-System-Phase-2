@@ -6,10 +6,10 @@ public class RegToReg {
     static void decode_execute(Process process,String opcode) {
         process.fetchToIR();
         int value1 = process.SPR[11];
-        System.out.println(value1);
+       // System.out.println(value1);
         process.fetchToIR();
         int value2 = process.SPR[11];
-        System.out.println(value2);
+       // System.out.println(value2);
         switch (opcode) {
             case "16": // MOV Instruction, Copies the Contents of Register R2 to R1.
             process.GPR[value1] = process.GPR[value2];

@@ -6,8 +6,10 @@ public class No_Op {
         
         switch (opcode) {
             case "F1": // RETURN Instruction , Pops PC from the Stack
-                --process.SPR[7];
-                process.SPR[10] = Process.memory[process.SPR[7]];
+                --process.SPR[8];
+                process.SPR[10] = Process.memory[process.SPR[8]];
+                if(process.SPR[10]   == 0)
+                    process.process_end = true;
                 break;
             case "F2": // NOOP Instruction, does nothing
                 break;

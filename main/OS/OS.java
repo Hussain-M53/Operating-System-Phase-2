@@ -58,9 +58,9 @@ public class OS {
             } else {
                 round_robin_scheduling();
             }
-            System.out.println(running_process.process_pcb.get_PROCESS_FILE_NAME());
             boolean switch_context = !running_process.execute_instr();
             if (switch_context) {
+                System.out.println("Context switched");
                 pcb = running_process.load_to_pcb();
                 byte priority = pcb.get_PROCESS_PRIORITY();
                 check_priority_and_addtoQueue(priority, pcb);
@@ -68,9 +68,15 @@ public class OS {
                 RUNNING_QUEUE.remove();
                 System.out.println("Process " + running_process.process_pcb.get_PROCESS_ID() + " of name "
                         + running_process.process_pcb.get_PROCESS_FILE_NAME() + " and priority "
-                        + running_process.process_pcb.get_PROCESS_PRIORITY() + " is completed");
+                        + running_process.process_pcb.get_PROCESS_PRIORITY() + " is completed in execution time : "
+                        + running_process.process_pcb.EXECUTION_TIME + " and waiting time : "
+                        + running_process.process_pcb.WAITING_TIME);
+                for (int i = running_process.SPR[7]; i <= running_process.SPR[2]; i++) {
+                    System.out.print((byte) Process.memory[i] + " ");
+                }
+                System.out.println();
             }
-            break;
+            // break;
         }
     }
 
@@ -86,5 +92,9 @@ public class OS {
         FileRead.listFilesFromFolder(folder, process);
         set_Free_page_table();
         execute();
+        // for (int i = 0; i < FileRead.memory_index; i++) {
+        // System.out.print((byte) Process.memory[i] + " ");
+        // }
+        // System.out.println();
     }
 }

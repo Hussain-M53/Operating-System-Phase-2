@@ -3,10 +3,9 @@ package main.PROCESS;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-import javax.sound.sampled.SourceDataLine;
-
 public class RegToImmediate {
-    static int current_frame, current_page, current_offset, jump_pages, jump_offset,offset;
+    static int current_frame, current_page, current_offset, jump_pages, jump_offset, offset;
+    static short immediate_value;
 
     // The immediate method is used to fetch the immediate value one by one from the
     // Instruction register
@@ -72,111 +71,198 @@ public class RegToImmediate {
             case "37": // BZ Instruction , Checks the flag register and if the zero bit is on, then it
                        // jumps to the offset.
                 if (process.flag_reg.get(1) == true) {
+                    immediate_value = (short) immediate(process);
+                    // System.out.println(immediate_value);
                     current_frame = process.SPR[10] / 128;
                     current_offset = process.SPR[10] % 128;
                     current_page = process.process_pcb.getCODE_PAGE_TABLE().indexOf(current_frame);
-                    jump_pages = immediate(process) / 128;
-                    jump_offset = immediate(process) % 128;
+                    if (current_page < 0) {
+                        process.SPR[10] += 2;
+                        System.out.println("ERROR : Frame does not exist in the page table");
+                        break;
+                    }
+                    jump_pages = immediate_value / 128;
+                    jump_offset = immediate_value % 128;
                     offset = jump_offset + current_offset;
                     if (offset >= 128) {
                         jump_pages++;
                         offset = offset % 128;
                     }
                     current_page = current_page + jump_pages;
-                    current_frame = process.process_pcb.getCODE_PAGE_TABLE().get(current_page);
-                    process.SPR[10] = (short) ((current_frame * 128) + offset);
+                    try {
+                        current_frame = process.process_pcb.getCODE_PAGE_TABLE().get(current_page);
+                        process.SPR[10] = (short) ((current_frame * 128) + offset - 1);
+                        if (process.SPR[10] > process.SPR[3])
+                            System.err.println("ERROR : Index out of process code limit");
+                    } catch (Exception error) {
+                        System.out.println("ERROR : Frame to jump does not exist in the page table");
+                    }
+                } else {
+                    process.SPR[10] += 2;
                 }
                 break;
 
             case "38": // BNZ Instruction, Checks the flag register and if the zero bit is off, then it
                        // jumps to the offset.
                 if (process.flag_reg.get(1) == false) {
+                    immediate_value = (short) immediate(process);
+                    // System.out.println(immediate_value);
                     current_frame = process.SPR[10] / 128;
                     current_offset = process.SPR[10] % 128;
                     current_page = process.process_pcb.getCODE_PAGE_TABLE().indexOf(current_frame);
-                    jump_pages = immediate(process) / 128;
-                    jump_offset = immediate(process) % 128;
+                    if (current_page < 0) {
+                        process.SPR[10] += 2;
+                        System.out.println("ERROR : Frame does not exist in the page table");
+                        break;
+                    }
+                    jump_pages = immediate_value / 128;
+                    jump_offset = immediate_value % 128;
                     offset = jump_offset + current_offset;
                     if (offset >= 128) {
                         jump_pages++;
                         offset = offset % 128;
                     }
-                    current_page = current_page + jump_pages;
-                    current_frame = process.process_pcb.getCODE_PAGE_TABLE().get(current_page);
-                    process.SPR[10] = (short) ((current_frame * 128) + offset);
+                    current_page += jump_pages;
+                    try {
+                        current_frame = process.process_pcb.getCODE_PAGE_TABLE().get(current_page);
+                        process.SPR[10] = (short) ((current_frame * 128) + offset - 1);
+                        if (process.SPR[10] > process.SPR[3])
+                            System.err.println("ERROR : Index out of process code limit");
+                    } catch (Exception error) {
+                        System.out.println("ERROR : Frame to jump does not exist in the page table");
+                    }
+                } else {
+                    process.SPR[10] += 2;
                 }
                 break;
 
             case "39": // BC Instruction, Checks the flag register and if the carry bit is on, then it
                        // jumps to the offset.
                 if (process.flag_reg.get(0) == true) {
+                    immediate_value = (short) immediate(process);
                     current_frame = process.SPR[10] / 128;
                     current_offset = process.SPR[10] % 128;
                     current_page = process.process_pcb.getCODE_PAGE_TABLE().indexOf(current_frame);
-                    jump_pages = immediate(process) / 128;
-                    jump_offset = immediate(process) % 128;
+                    if (current_page < 0) {
+                        process.SPR[10] += 2;
+                        System.out.println("ERROR : Frame does not exist in the page table");
+                        break;
+                    }
+                    jump_pages = immediate_value / 128;
+                    jump_offset = immediate_value % 128;
                     offset = jump_offset + current_offset;
                     if (offset >= 128) {
                         jump_pages++;
                         offset = offset % 128;
                     }
                     current_page = current_page + jump_pages;
-                    current_frame = process.process_pcb.getCODE_PAGE_TABLE().get(current_page);
-                    process.SPR[10] = (short) ((current_frame * 128) + offset);
+                    try {
+                        current_frame = process.process_pcb.getCODE_PAGE_TABLE().get(current_page);
+                        process.SPR[10] = (short) ((current_frame * 128) + offset - 1);
+                        if (process.SPR[10] > process.SPR[3])
+                            System.err.println("ERROR : Index out of process code limit");
+                    } catch (Exception error) {
+                        System.out.println("ERROR : Frame to jump does not exist in the page table");
+                    }
+                } else {
+                    process.SPR[10] += 2;
                 }
                 break;
 
             case "3A": // BS Instruction, Checks the flag register and if the sign bit is on, then it
                        // jumps to the offset.
+
                 if (process.flag_reg.get(2) == true) {
+                    immediate_value = (short) immediate(process);
                     current_frame = process.SPR[10] / 128;
                     current_offset = process.SPR[10] % 128;
                     current_page = process.process_pcb.getCODE_PAGE_TABLE().indexOf(current_frame);
-                    jump_pages = immediate(process) / 128;
-                    jump_offset = immediate(process) % 128;
+                    if (current_page < 0) {
+                        process.SPR[10] += 2;
+                        System.out.println("ERROR : Frame does not exist in the page table");
+                        break;
+                    }
+                    jump_pages = immediate_value / 128;
+                    jump_offset = immediate_value % 128;
                     offset = jump_offset + current_offset;
                     if (offset >= 128) {
                         jump_pages++;
                         offset = offset % 128;
                     }
                     current_page = current_page + jump_pages;
-                    current_frame = process.process_pcb.getCODE_PAGE_TABLE().get(current_page);
-                    process.SPR[10] = (short) ((current_frame * 128) + offset);
+                    try {
+                        current_frame = process.process_pcb.getCODE_PAGE_TABLE().get(current_page);
+                        process.SPR[10] = (short) ((current_frame * 128) + offset - 1);
+                        if (process.SPR[10] > process.SPR[3])
+                            System.err.println("ERROR : Index out of process code limit");
+                    } catch (Exception error) {
+                        System.out.println("ERROR : Frame to jump does not exist in the page table");
+                    }
+                } else {
+                    process.SPR[10] += 2;
                 }
                 break;
 
             case "3B": // JMP Instruction , jumps to the offset.
+                immediate_value = (short) immediate(process);
+                // System.out.println(immediate_value);
                 current_frame = process.SPR[10] / 128;
                 current_offset = process.SPR[10] % 128;
                 current_page = process.process_pcb.getCODE_PAGE_TABLE().indexOf(current_frame);
-                jump_pages = immediate(process) / 128;
-                jump_offset = immediate(process) % 128;
+                if (current_page < 0) {
+                    process.SPR[10] += 2;
+                    System.out.println("ERROR : Frame does not exist in the page table");
+                    break;
+                }
+                jump_pages = immediate_value / 128;
+                jump_offset = immediate_value % 128;
                 offset = jump_offset + current_offset;
                 if (offset >= 128) {
                     jump_pages++;
                     offset = offset % 128;
                 }
                 current_page = current_page + jump_pages;
-                current_frame = process.process_pcb.getCODE_PAGE_TABLE().get(current_page);
-                process.SPR[10] = (short) ((current_frame * 128) + offset);
+                try {
+                    current_frame = process.process_pcb.getCODE_PAGE_TABLE().get(current_page);
+                    process.SPR[10] = (short) ((current_frame * 128) + offset - 1);
+                    if (process.SPR[10] > process.SPR[3])
+                        System.err.println("ERROR : Index out of process code limit");
+                } catch (Exception error) {
+                    System.out.println("ERROR : Frame to jump does not exist in the page table");
+                }
                 break;
 
             case "3C": // CALL Instruction ,Pushes the PC on stack, and jumps to offset.
-                Process.memory[process.SPR[8]] = (byte) process.SPR[10];
+                immediate_value = (short) immediate(process);
+                // System.out.println(immediate_value);
+                // System.out.println((process.process_pcb.getSTACK_FRAME() * 128) +
+                // process.SPR[8]);
+                Process.memory[(process.process_pcb.getSTACK_FRAME() * 128) + process.SPR[8]] = (byte) process.SPR[10];
+                process.SPR[8]++;
                 current_frame = process.SPR[10] / 128;
                 current_offset = process.SPR[10] % 128;
                 current_page = process.process_pcb.getCODE_PAGE_TABLE().indexOf(current_frame);
-                jump_pages = immediate(process) / 128;
-                jump_offset = immediate(process) % 128;
-                System.out.println("current_frame "+current_frame+"current_offset "+current_offset+"current_page "+current_page+"jump_page "+jump_pages+"jump_offset "+jump_offset);
+                if (current_page < 0) {
+                    process.SPR[10] += 2;
+                    System.err.println("ERROR : Frame does not exist in the page table");
+                    break;
+                }
+                jump_pages = immediate_value / 128;
+                jump_offset = immediate_value % 128;
                 offset = jump_offset + current_offset;
                 if (offset >= 128) {
                     jump_pages++;
                     offset = offset % 128;
                 }
                 current_page = current_page + jump_pages;
-                current_frame = process.process_pcb.getCODE_PAGE_TABLE().get(current_page);
-                process.SPR[10] = (short) ((current_frame * 128) + offset);
+                try {
+                    current_frame = process.process_pcb.getCODE_PAGE_TABLE().get(current_page);
+                    process.SPR[10] = (short) ((current_frame * 128) + offset - 1);
+                    if (process.SPR[10] > process.SPR[3])
+                        System.err.println("ERROR : Index out of process code limit");
+                } catch (Exception error) {
+                    System.err.println("ERROR : Frame to jump does not exist in the page table");
+                }
                 ++process.SPR[8];
                 break;
             case "3D": // ACT Instruction ,Does the service defined by num

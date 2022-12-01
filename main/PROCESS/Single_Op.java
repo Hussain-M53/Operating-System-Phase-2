@@ -35,14 +35,14 @@ public class Single_Op {
                 break;
 
             case "77": // PUSH Instruction , Pushes the contents of R1 on the Stack.
-                Process.memory[process.SPR[8]] = (byte) process.SPR[11];
-                ++process.SPR[8];
+            Process.memory[(process.process_pcb.getSTACK_FRAME()*128)+process.SPR[8]] =(byte)process.GPR[process.SPR[11]];
+          //  System.out.println((process.process_pcb.getSTACK_FRAME()*128)+process.SPR[8]);
+            process.SPR[8]++;
                 break;
 
             case "78": // POP Instruction / Pop the contents from Stack and allocates it to R1.
                 --process.SPR[8];
-                process.GPR[process.SPR[11]] = Process.memory[process.SPR[8]];
-
+                process.GPR[process.SPR[11]] = Process.memory[(process.process_pcb.getSTACK_FRAME()*128)+process.SPR[8]];
         }
     }
 }
