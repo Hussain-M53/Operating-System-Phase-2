@@ -22,7 +22,7 @@ public class FileRead {
             if (fileEntry.isDirectory()) {
                 listFilesFromFolder(fileEntry, process);
             } else {
-                set_process_to_queue_from_file(process, fileEntry.getPath());
+                set_process_to_queue_from_file(process, fileEntry.getName());
             }
         }
     }
@@ -33,20 +33,17 @@ public class FileRead {
         short instr_counter = 0, counter = 0;
         byte second_byte = 0;
         try {
-            InputStream inputStream = new FileInputStream("./" + path);
+            InputStream inputStream = new FileInputStream("./Files/" + path);
             while ((byteRead = (byte) inputStream.read()) != -1) {
-                // System.out.print(byteRead + " ");
                 counter++;
                 if (counter == 1)
                     priority = byteRead;
                 else if (counter == 2) {
                     second_byte = (byte) inputStream.read();
-                    // System.out.print(second_byte + " ");
                     id = join(byteRead, second_byte);
                     counter++;
                 } else if (counter == 4) {
                     second_byte = (byte) inputStream.read();
-                    // System.out.print(second_byte + " ");
                     data_size = join(byteRead, second_byte);
                     counter++;
                 } else if (counter > 8) {
@@ -70,12 +67,8 @@ public class FileRead {
                         pcb.getDATA_PAGE_TABLE().toString());
                 System.out.println("code page table : " +
                         pcb.getCODE_PAGE_TABLE().toString());
-                // System.out.println("current frame_offset : " + bytes_in_frame + " of frame no : " + current_frame);
             }
             System.out.println(path + " , " + priority + " is loaded in memory");
-            // System.out.println(data_instr.toString());
-            // System.out.println(code_instr.toString());
-
             data_instr.clear();
             code_instr.clear();
         } catch (IOException e) {
@@ -89,13 +82,13 @@ public class FileRead {
 
     static void load_data_to_memory(ArrayList<Byte> instr, PCB pcb) {
         // The Stack limit (SPR[9]) is set to current memory index + 49, which is the
-        // last index allocated to
-        // the stack in the memory.
+        // last index allocated to the stack in the memory.
         pcb.get_SPR()[9] = (short) (memory_index + 49);
         // The Stack Base (SPR[7]) is set to 0.
         pcb.get_SPR()[7] = (short) memory_index;
         // The Stack counter is set to the Stack Base which is 0.
         pcb.get_SPR()[8] = pcb.get_SPR()[7];
+        // ALLOTED FRAME TO A STACK
         pcb.setSTACK_FRAME(current_frame);
         memory_index += 50;
         if (bytes_in_frame + 50 >= 128) {
@@ -147,7 +140,7 @@ public class FileRead {
                 pcb.setCODE_PAGE_TABLE(current_frame);
             }
         }
-        memory_index += (current_byte);
+        memory_index += current_byte;
         // code limit
         pcb.get_SPR()[2] = (short) (memory_index - 1);
     }

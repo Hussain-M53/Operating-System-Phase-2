@@ -4,8 +4,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
-
+import main.ERRORHANDLING.ErrorHandling;
 import main.PCB.PCB;
+import main.PROCESS.Display;
+import main.PROCESS.FileOutput;
 import main.PROCESS.FileRead;
 import main.PROCESS.Process;
 
@@ -22,7 +24,7 @@ public class OS {
         } else if (priority > 15 && priority <= 31) {
             LOW_PRIORITY_QUEUE.add(pcb);
         } else {
-            System.out.println("Invalid priority");
+            ErrorHandling.invalid_priority();
             return false;
         }
         return true;
@@ -37,7 +39,6 @@ public class OS {
             }
         }
         PCB pcb = HIGH_PRIORITY_QUEUE.remove(index);
-        running_process.load_from_pcb(pcb);
         RUNNING_QUEUE.add(pcb);
         running_process.load_from_pcb(pcb);
     }
@@ -48,6 +49,12 @@ public class OS {
         running_process.load_from_pcb(pcb);
         running_process.set_cycle_limit(8);
         running_process.apply_RR = true;
+    }
+
+    public static void set_frame_to_free_page_table(ArrayList<Integer> page_table) {
+        for (int i = 0; i < page_table.size(); i++) {
+            OS.Free_PAGE_TABLE.add(page_table.get(i));
+        }
     }
 
     public static void execute() {
@@ -71,12 +78,13 @@ public class OS {
                         + running_process.process_pcb.get_PROCESS_PRIORITY() + " is completed in execution time : "
                         + running_process.process_pcb.EXECUTION_TIME + " and waiting time : "
                         + running_process.process_pcb.WAITING_TIME);
-                for (int i = running_process.SPR[7]; i <= running_process.SPR[2]; i++) {
-                    System.out.print((byte) Process.memory[i] + " ");
-                }
-                System.out.println();
+                // releasing the frames when the process is exxecuted
+                set_frame_to_free_page_table(running_process.process_pcb.getDATA_PAGE_TABLE());
+                set_frame_to_free_page_table(running_process.process_pcb.getCODE_PAGE_TABLE());
+
             }
-            // break;
+            // dumping the data into the file after execution.
+            FileOutput.write_to_file(running_process.process_pcb);
         }
     }
 
@@ -96,5 +104,6 @@ public class OS {
         // System.out.print((byte) Process.memory[i] + " ");
         // }
         // System.out.println();
+        Display.print_mem(process);
     }
 }

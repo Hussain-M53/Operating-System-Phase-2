@@ -1,0 +1,12 @@
+Flag Register will be set after Arithmetic, logical, Shift and Rotate Operations as follows:
+Carry Bit: Set for Shift and Rotate operations only. If the most significant bit is on before the operation.
+Zero Bit: If the result of Arithmetic, logical, Shift and Rotate operations is Zero.
+Sign Bit: If the result of Arithmetic, logical, Shift and Rotate operations is Negative.
+Overflow Bit: If the result of Arithmetic and logical operations is either carry in or carry out of the most significant bit.
+
+•	There can be access violation on two conditions:
+1.	Data base > Data Limit
+2.	PC > CC
+
+
+•	Stack overflow/underflow

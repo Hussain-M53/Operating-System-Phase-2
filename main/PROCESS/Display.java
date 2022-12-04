@@ -3,9 +3,9 @@ package main.PROCESS;
 public class Display {
 
     // Prints the contents of the memory
-    static void print_mem(Process process) {
+    public static void print_mem(Process process) {
         System.out.print("Memory : ");
-        for (int i = 0; i <= process.SPR[3]; i++) {
+        for (int i = 0; i < FileRead.memory_index; i++) {
             System.out.print(Convert.convert_int_to_hexa(Byte.toUnsignedInt(Process.memory[i])) + " ");
         }
         System.out.println();
@@ -16,7 +16,7 @@ public class Display {
     static void print_stack(Process process) {
         System.out.print("Stack : ");
         for (int i = 0; i <= process.process_pcb.get_SPR()[9]; i++) {
-            System.out.print(process.process_pcb.getSTACK_FRAME() * 128 + i + ",");
+            System.out.print(Process.memory[(process.process_pcb.getSTACK_FRAME() * 128) + i] + ",");
         }
         System.out.println();
     }

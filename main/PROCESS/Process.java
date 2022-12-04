@@ -2,6 +2,7 @@ package main.PROCESS;
 
 import java.util.BitSet;
 
+import main.ERRORHANDLING.ErrorHandling;
 import main.PCB.PCB;
 
 public class Process {
@@ -76,7 +77,7 @@ public class Process {
     // The findOpcodeInstr analysis the Opcode and executes it accordingly
     void findOpcodeInstr(int op) {
         String opcode = decode_IR(op);
-      // System.out.println("Opcode : " + opcode);
+       // System.out.println("Opcode : " + opcode);
         switch (opcode) {
             case "16", "17", "18", "19", "1A", "1B", "1C":
                 RegToReg.decode_execute(this, opcode);
@@ -91,14 +92,14 @@ public class Process {
                 break;// 4
 
             case "71", "72", "73", "74", "75", "76", "77", "78":
-                Single_Op.decode_execute(this, opcode);// 2
+                Single_Op.decode_execute(this, opcode);
                 break;
 
             case "F1", "F2", "F3":
                 No_Op.decode_execute(this, opcode);// 1
                 break;
             default:
-                System.out.println("Invalid opcode : " + opcode);
+                ErrorHandling.invalid_opcode(opcode);
         }
     }
 
@@ -112,22 +113,20 @@ public class Process {
         System.out.println(process_pcb.get_PROCESS_FILE_NAME() + " has started");
         this.process_pcb.WAITING_TIME = total_time - this.process_pcb.EXECUTION_TIME;
         while (!process_end && SPR[10] <= SPR[3]) {
-           // System.out.println("pc : " + SPR[10] + " code counter : " + SPR[3]);
+            //System.out.println("pc : " + SPR[10] + " code counter : " + SPR[3]);
             fetchToIR();
             findOpcodeInstr(SPR[11]);
             total_time++;
             this.process_pcb.EXECUTION_TIME++;
-          //  System.out.println("total time : " + total_time);
             // flag_reg.clear();
-            // Display.print_registers(this);
+            //Display.print_registers(this);
             clock_cycle++;
             if (clock_cycle >= clock_cycle_range && apply_RR) {
                 clock_cycle = 0;
                 return false;
             }
-
+            //Display.print_stack(this);
         }
-      //  System.out.println("stack base "+ SPR[7] + " stack limit : " + SPR[9]);
         clock_cycle = 0;
         return true;
     }
